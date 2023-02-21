@@ -26,7 +26,7 @@ contract GMNMachine is AccessControl, ERC721Enumerable {
 
     struct MachineInfo {
         string name;
-        uint256 kind;
+        uint8 kind;
         Rarity rarity;
     }
 

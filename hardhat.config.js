@@ -71,7 +71,6 @@ function createBSCConfig(){
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   defaultNetwork: "hardhat",
-  solidity: "0.8.17",
   gasReporter: {
     currency: "USD",
     enabled: true,
@@ -88,5 +87,21 @@ module.exports = {
     ropsten: createTestnetConfig("ropsten"),
     bsc_testnet: createBSCTestnetConfig(),
     bsc: createBSCConfig(),
-  }
+  },
+  solidity: {
+    version: "0.8.4",
+    settings: {
+      metadata: {
+        // Not including the metadata hash
+        // https://github.com/paulrberg/solidity-template/issues/31
+        bytecodeHash: "none",
+      },
+      // You should disable the optimizer when debugging
+      // https://hardhat.org/hardhat-network/#solidity-optimizer-support
+      optimizer: {
+        enabled: true,
+        runs: 800,
+      },
+    },
+  },
 };

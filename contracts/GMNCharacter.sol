@@ -30,7 +30,7 @@ contract GMNCharacter is AccessControl, ERC721Enumerable {
 
     struct CharacterInfo {
         string name;
-        uint256 kind;
+        uint8 kind;
         Sex sex;
         Rarity rarity;
     }
