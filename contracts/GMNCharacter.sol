@@ -54,7 +54,7 @@ contract GMNCharacter is AccessControl, ERC721Enumerable {
     event WithdrawRevenue(address revenueAddress, uint256 amount);
 
     constructor() ERC721("GoldMinerNFT Character", "GMNC") {
-        baseUri = "https://api.goldminernft.xyz/character/metadata/";
+        baseUri = "https://api-test.goldminernft.xyz/character/metadata/";
 
         _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
         _setRoleAdmin(MINTER_ROLE, OWNER_ROLE);

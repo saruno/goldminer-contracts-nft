@@ -49,7 +49,7 @@ contract GMNMachine is AccessControl, ERC721Enumerable {
     event WithdrawRevenue(address revenueAddress, uint256 amount);
 
     constructor() ERC721("GoldMinerNFT Machine", "GMNM") {
-         baseUri = "https://api.goldminernft.xyz/machine/metadata/";
+         baseUri = "https://api-test.goldminernft.xyz/machine/metadata/";
 
         _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
         _setRoleAdmin(MINTER_ROLE, OWNER_ROLE);

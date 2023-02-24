@@ -23,6 +23,8 @@ describe("BUY GMNCharacterShop NFT", () => {
         await TokenTest.transfer(signers[2].address, ethers.utils.parseEther("10000"));
         await TokenTest.connect(signers[2]).approve(GMNCharacter.address, ethers.utils.parseEther("1000000"));
         await TokenTest.connect(signers[2]).approve(GMNCharacterShop.address, ethers.utils.parseEther("1000000"));
+        console.log("   Character Address " + GMNCharacter.address);
+        console.log("   CharacterShop Address " + GMNCharacterShop.address);
     };//End deployFixture
 
     before(async() => {
@@ -34,8 +36,10 @@ describe("BUY GMNCharacterShop NFT", () => {
 
         it("success grant minter role to signers[1]", async() => {
             console.log("       signers 1 " + signers[1].address);
-            await GMNCharacter.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
-            const tx = await GMNCharacterShop.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
+            const tx1 = await GMNCharacter.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
+            await tx1.wait();
+            const tx2 = await GMNCharacterShop.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
+            await tx2.wait();
             expect(await GMNCharacterShop.hasRole(ethers.utils.id("MINTER_ROLE"), signers[1].address)).eq(true);
         }); //End it
 
@@ -56,7 +60,7 @@ describe("BUY GMNCharacterShop NFT", () => {
             ];
 
             const expiry = BigNumber.from(Math.floor(new Date().getTime() / 1000 + 2 * 86400));
-            console.log("Expiry", expiry);
+            console.log("       expiry", expiry);
             const price1Character = ethers.utils.parseEther("2000");
             const numberCharacter = characterInfos.length;
             let prices = [];
@@ -68,7 +72,6 @@ describe("BUY GMNCharacterShop NFT", () => {
 
             for (let i = 0; i < numberCharacter; i++) {
                 let characterInfo = characterInfos[i];
-                console.log("Expire", i, expiry.add(i));
                 let hash = ethers.utils.solidityKeccak256(
                     ["address", "uint256", "string", "uint8", "uint8", "uint8", "address", "uint256"],
                     [GMNCharacterShop.address, price1Character, characterInfo.name, characterInfo.kind, characterInfo.sex, characterInfo.rarity, GMNCharacter.address, expiry.add(i)]
@@ -112,10 +115,15 @@ describe("BUY GMNCharacterShop NFT", () => {
             );
             let shopSignatureMessageHashBinary = ethers.utils.arrayify(shopSignatureKeccak256);
             let shopSignature = await signers[1].signMessage(shopSignatureMessageHashBinary);
+            console.log("ShopSignature ", shopSignature);
             
+            /*
             let numberNFTBefore = await GMNCharacter.balanceOf(signers[2].address);
             let tx = await GMNCharacterShop.connect(signers[2]).buy(characterInfos, prices, buySigs, expiry, shopSignature);
-            await tx.wait();
+            const txReceipt = await tx.wait();
+            // console.log("       Tx", tx);
+            // console.log("       TxReceipt", txReceipt);
+            // console.log("       Events", JSON.stringify(txReceipt.events));
             let numberNFTAfter = await GMNCharacter.balanceOf(signers[2].address);
 
             console.log("       NumberNFTBefore", numberNFTBefore);
@@ -124,6 +132,9 @@ describe("BUY GMNCharacterShop NFT", () => {
             console.log("       Bought Character 2", await GMNCharacter.getCharacter(BigNumber.from(2)));
 
             expect(numberNFTAfter).gt(numberNFTBefore);
+            */
+           await expect(GMNCharacterShop.connect(signers[2]).buy(characterInfos, prices, buySigs, expiry, shopSignature))
+           .to.emit(GMNCharacterShop, "Sold");
         });
     });
 });

@@ -2,6 +2,7 @@
 // yours, or create new ones.
 
 const path = require("path");
+const CURRENCY_ADDRESS_BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
 
 async function main() {
   // This is just a convenience check
@@ -15,52 +16,37 @@ async function main() {
 
   // ethers is available in the global scope
   const [deployer] = await ethers.getSigners();
-  const signers = await ethers.getSigners();
   console.log(
     "Deploying the contracts with the account:",
     await deployer.getAddress()
   );
 
-  console.log("Account balance:", (await deployer.getBalance()).toString());
-
-  const TokenTestFactory = await ethers.getContractFactory("TokenTest");
-  const TokenTest = await TokenTestFactory.deploy("100000000000000000000000000000"); 
-  await TokenTest.deployed();
+  console.log("Account balance:", (await deployer.getBalance()).toString())
 
   const GMNCFactory = await ethers.getContractFactory("GMNCharacter");
   const GMNCharacter = await GMNCFactory.deploy();
   await GMNCharacter.deployed();
-  await GMNCharacter.setCurrency(TokenTest.address);
+  await GMNCharacter.setCurrency(CURRENCY_ADDRESS_BUSD);
 
   const GMNCShopFactory = await ethers.getContractFactory("GMNCharacterShop");
-  const GMNCharacterShop = await GMNCShopFactory.deploy(GMNCharacter.address, TokenTest.address);
+  const GMNCharacterShop = await GMNCShopFactory.deploy(GMNCharacter.address, CURRENCY_ADDRESS_BUSD);
   await GMNCharacterShop.deployed();
 
   const GMNMFactory = await ethers.getContractFactory("GMNMachine");
   const GMNMachine = await GMNMFactory.deploy();
   await GMNMachine.deployed();
-  await GMNMachine.setCurrency(TokenTest.address);
+  await GMNMachine.setCurrency(CURRENCY_ADDRESS_BUSD);
 
   const GMNMShopFactory = await ethers.getContractFactory("GMNMachineShop"); 
-  const GMNMachineShop = await GMNMShopFactory.deploy(GMNMachine.address, TokenTest.address);
+  const GMNMachineShop = await GMNMShopFactory.deploy(GMNMachine.address, CURRENCY_ADDRESS_BUSD);
   await GMNMachineShop.deployed();
   
-  console.log("Token address:", TokenTest.address);
   console.log("GMNCharacter address:", GMNCharacter.address);
   console.log("GMNCharacterShop address:", GMNCharacterShop.address);
   console.log("GMNMachine address:", GMNMachine.address);
   console.log("GMNMachineShop address:", GMNMachineShop.address);
 
-  await TokenTest.transfer(signers[2].address, ethers.utils.parseEther("1000000"));
-  const tx1 = await GMNCharacter.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
-  await tx1.wait();
-  const tx2 = await GMNCharacterShop.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
-  await tx2.wait();
-  await GMNMachine.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
-  await GMNMachineShop.grantRole(ethers.utils.id("MINTER_ROLE"), signers[1].address);
-
   // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(TokenTest, "TokenTest");
   saveFrontendFiles(GMNCharacter, "GMNCharacter");
   saveFrontendFiles(GMNCharacterShop, "GMNCharacterShop");
   saveFrontendFiles(GMNMachine, "GMNMachine");
@@ -69,7 +55,7 @@ async function main() {
 
 function saveFrontendFiles(token, contractName) {
   const fs = require("fs");
-  const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts-hardhat");
+  const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts-mainnet");
 
   if (!fs.existsSync(contractsDir)) {
     fs.mkdirSync(contractsDir);
