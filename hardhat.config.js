@@ -88,6 +88,9 @@ module.exports = {
     bsc_testnet: createBSCTestnetConfig(),
     bsc: createBSCConfig(),
   },
+  etherscan: {
+    apiKey: "4MN7CMFH6I572CTBGPDEJJ611IAP4QXRMS"
+  },
   solidity: {
     version: "0.8.4",
     settings: {
